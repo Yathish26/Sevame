@@ -1,9 +1,24 @@
+import { Link } from 'react-router-dom'
+import { AffiliateSection, PolicyPage, TermsSection, TrustSection } from '../components/PolicySections.jsx'
+
 function TermsAndConditions() {
   return (
-    <section className="max-w-3xl mx-auto w-full px-4 py-8 sm:py-12">
-      <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4 break-words">Terms and Conditions</h1>
-      <p className="text-sm sm:text-base leading-relaxed text-white/70">Sevame's terms and conditions will go here.</p>
-    </section>
+    <PolicyPage
+      kicker="Legal & Governance Charter"
+      title="Terms & Conditions"
+      subtitle="The rules for posting, accepting and completing tasks on Seva Mein in Mangaluru."
+      aside={
+        <Link to="/privacy-policy" className="self-start text-xs font-bold text-[#0F5257] hover:underline">
+          Read the Privacy Policy →
+        </Link>
+      }
+    >
+      <div className="grid gap-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <TermsSection />
+        <TrustSection />
+        <AffiliateSection />
+      </div>
+    </PolicyPage>
   )
 }
 
