@@ -53,7 +53,7 @@ export function MetricCards() {
     <div className="grid sm:grid-cols-2 gap-4">
       {/* Trust Score */}
       <div className="relative p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-teal-50/30 border border-slate-200/80 space-y-2.5 overflow-hidden">
-        <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full bg-emerald-400/10 blur-xl" />
+        <div className="soft-blob -right-10 -top-10 w-32 h-32" style={{ '--blob': 'rgba(52, 211, 153, 0.16)' }} />
         <div className="flex items-center justify-between relative z-10">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Trust Score</span>
           <button type="button" onClick={() => openModal('trustRules')} className="text-xs font-bold text-[#0F5257] hover:underline">
@@ -77,7 +77,7 @@ export function MetricCards() {
 
       {/* Total Points */}
       <div className="relative p-4 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50/60 border border-amber-200/90 space-y-2.5 overflow-hidden">
-        <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-amber-300/20 blur-2xl" />
+        <div className="soft-blob -right-14 -bottom-14 w-40 h-40" style={{ '--blob': 'rgba(252, 211, 77, 0.3)' }} />
         <div className="flex items-center justify-between relative z-10">
           <span className="text-xs font-bold uppercase tracking-wider text-amber-900">Total Points</span>
           <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-200/80 text-amber-950 shadow-sm">{user.badge}</span>

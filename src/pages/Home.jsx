@@ -54,8 +54,8 @@ function Hero() {
 
   return (
     <div className="rounded-[2rem] bg-gradient-to-br from-[#0A3D40] via-[#0F5257] to-[#062B2E] text-white p-6 sm:p-9 lg:p-10 shadow-2xl relative overflow-hidden border border-teal-600/40 ring-1 ring-white/10">
-      <div className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full bg-amber-400/20 blur-3xl animate-float-slow" />
-      <div className="pointer-events-none absolute -bottom-28 -left-20 w-80 h-80 rounded-full bg-emerald-400/20 blur-3xl animate-float-medium" />
+      <div className="soft-blob -top-40 -right-40 w-[28rem] h-[28rem] animate-float-slow" style={{ '--blob': 'rgba(251, 191, 36, 0.28)' }} />
+      <div className="soft-blob -bottom-44 -left-36 w-[28rem] h-[28rem] animate-float-medium" style={{ '--blob': 'rgba(52, 211, 153, 0.28)' }} />
       <div className="pointer-events-none absolute top-1/3 right-1/4 w-48 h-48 rounded-3xl bg-gradient-to-br from-amber-300/10 to-transparent rotate-12 backdrop-blur-sm border border-white/5 animate-float-fast" />
       <div className="pointer-events-none absolute bottom-1/4 left-1/3 w-32 h-32 rounded-full border border-amber-300/20 animate-float-slow" />
 
@@ -127,8 +127,8 @@ function AffiliateCard() {
 
   return (
     <div className="lg:col-span-5 bg-gradient-to-br from-amber-100/95 via-orange-50 to-rose-50/80 rounded-[1.75rem] border border-amber-300/80 p-5 sm:p-6 shadow-lg shadow-amber-200/40 card-lift flex flex-col justify-between gap-4 relative overflow-hidden">
-      <div className="pointer-events-none absolute -right-10 -top-10 w-40 h-40 rounded-full bg-amber-400/25 blur-2xl animate-float-medium" />
-      <div className="pointer-events-none absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-rose-300/20 blur-2xl animate-float-slow" />
+      <div className="soft-blob -right-20 -top-20 w-60 h-60 animate-float-medium" style={{ '--blob': 'rgba(251, 191, 36, 0.35)' }} />
+      <div className="soft-blob -left-16 -bottom-16 w-48 h-48 animate-float-slow" style={{ '--blob': 'rgba(253, 164, 175, 0.3)' }} />
       <div className="space-y-2.5 relative z-10">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black bg-gradient-to-r from-orange-600 to-rose-600 text-white shadow-md badge-pulse">

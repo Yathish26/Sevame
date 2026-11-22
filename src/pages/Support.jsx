@@ -161,8 +161,8 @@ function Support() {
               </p>
               <p>
                 <strong>Email:</strong>{' '}
-                <a href="mailto:grievance@sevamein.in" className="text-[#0F5257] hover:underline">
-                  grievance@sevamein.in
+                <a href="mailto:grievance@sevamein.com" className="text-[#0F5257] hover:underline">
+                  grievance@sevamein.com
                 </a>
               </p>
               <p>

@@ -7,7 +7,7 @@ export const demoUser = {
   trustScore: 28,
   totalPoints: 640,
   badge: 'Trusted Pro',
-  affiliateLink: 'https://sevamein.in/ref/ROHAN10',
+  affiliateLink: 'https://sevamein.com/ref/ROHAN10',
 }
 
 export const CATEGORIES = [

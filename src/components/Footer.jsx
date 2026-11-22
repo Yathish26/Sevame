@@ -8,10 +8,14 @@ function Footer() {
     <footer className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 pb-6 border-t border-slate-200/80 text-xs text-slate-600 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
       <div className="flex flex-col sm:flex-row items-center gap-3">
         <Link to="/" className="inline-flex items-center rounded-lg bg-black px-2 py-1.5" aria-label="Seva Mein home">
-          <img src="/logo.png" alt="Seva Mein" className="h-4 w-auto" />
+          <img src="/logo.png" alt="Seva Mein — sevamein.com" className="h-4 w-auto" />
         </Link>
         <p>
-          © {new Date().getFullYear()} <strong className="text-slate-800">Seva Mein</strong> • Mangaluru Peer-to-Peer Task Marketplace (Section 79 Intermediary).
+          © {new Date().getFullYear()} <strong className="text-slate-800">Seva Mein</strong> (
+          <a href="https://sevamein.com" className="font-semibold text-[#0F5257] hover:underline">
+            sevamein.com
+          </a>
+          ) • Mangaluru Peer-to-Peer Task Marketplace (Section 79 Intermediary).
         </p>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-4 font-semibold">

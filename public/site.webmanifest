@@ -1,0 +1,11 @@
+{
+  "name": "Seva Mein",
+  "short_name": "Seva Mein",
+  "description": "Get help nearby in Mangaluru — peer-to-peer tasks and local jobs.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eef4f3",
+  "theme_color": "#0f5257",
+  "icons": [{ "src": "/favicon.png", "type": "image/png", "sizes": "any" }]
+}

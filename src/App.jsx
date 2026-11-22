@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AppProvider } from './context/AppProvider.jsx'
 import Background from './components/Background.jsx'
+import RouteSeo from './components/RouteSeo.jsx'
 import NoticeBar from './components/NoticeBar.jsx'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
@@ -37,6 +38,7 @@ function App() {
     <AppProvider>
       <BrowserRouter>
         <ScrollToTop />
+        <RouteSeo />
         <div className="relative z-[1] min-h-screen flex flex-col text-slate-900 antialiased pb-24 md:pb-12">
           <Background />
           <Toasts />
