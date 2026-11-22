@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useApp } from '../context/app-context.js'
 import { TRUST_RULES } from '../data/demo.js'
+import { EMERGENCY_NUMBER } from '../master.js'
 
 const MANGALURU_PIN = '12.8855°N, 74.8388°E'
 
@@ -181,7 +182,7 @@ function SosModal() {
       }
     >
       <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-        If you are in immediate danger in Mangaluru, call <strong className="text-rose-700">112</strong> right away. You can also log your live GPS
+        If you are in immediate danger in Mangaluru, call <strong className="text-rose-700">{EMERGENCY_NUMBER}</strong> right away. You can also log your live GPS
         coordinates and alert Seva Mein&apos;s safety desk.
       </p>
       <div className="p-3.5 rounded-2xl bg-gradient-to-br from-rose-50 to-pink-50/50 border border-rose-200/80 text-xs space-y-1">
@@ -192,10 +193,10 @@ function SosModal() {
       </div>
       <div className="grid grid-cols-2 gap-2.5">
         <a
-          href="tel:112"
+          href={`tel:${EMERGENCY_NUMBER}`}
           className="py-3 rounded-xl text-center text-xs font-extrabold bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white shadow-md transition-all hover:scale-105 active:scale-95"
         >
-          Dial 112 Now
+          Dial {EMERGENCY_NUMBER} Now
         </a>
         <button
           type="button"

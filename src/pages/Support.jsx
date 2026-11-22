@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useApp } from '../context/app-context.js'
+import { EMERGENCY_NUMBER, GRIEVANCE_EMAIL, GRIEVANCE_OFFICER_NAME, JURISDICTION } from '../master.js'
 
 const TICKET_TYPES = [
   'Task Dispute / No-Show',
@@ -132,15 +133,15 @@ function Support() {
               </div>
             </div>
             <p className="text-xs sm:text-sm text-rose-900/90 leading-relaxed">
-              If you ever feel unsafe during an in-person handover or task, leave the location immediately, dial <strong>112 (India Emergency)</strong>, and
+              If you ever feel unsafe during an in-person handover or task, leave the location immediately, dial <strong>{EMERGENCY_NUMBER} (India Emergency)</strong>, and
               trigger the Seva Mein GPS safety log.
             </p>
             <div className="flex flex-wrap gap-2.5">
               <a
-                href="tel:112"
+                href={`tel:${EMERGENCY_NUMBER}`}
                 className="px-4 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white shadow-md transition-all hover:scale-105 active:scale-95"
               >
-                Call 112 Emergency
+                Call {EMERGENCY_NUMBER} Emergency
               </a>
               <button
                 type="button"
@@ -157,16 +158,16 @@ function Support() {
             <p className="text-slate-600">For statutory notices, law enforcement requests, or formal complaints:</p>
             <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#F6F5F2] to-slate-50 border border-slate-200 space-y-1 text-slate-800">
               <p>
-                <strong>Grievance Officer:</strong> [Insert Officer Name]
+                <strong>Grievance Officer:</strong> {GRIEVANCE_OFFICER_NAME}
               </p>
               <p>
                 <strong>Email:</strong>{' '}
-                <a href="mailto:grievance@sevamein.com" className="text-[#0F5257] hover:underline">
-                  grievance@sevamein.com
+                <a href={`mailto:${GRIEVANCE_EMAIL}`} className="text-[#0F5257] hover:underline">
+                  {GRIEVANCE_EMAIL}
                 </a>
               </p>
               <p>
-                <strong>Jurisdiction:</strong> Mangaluru, Dakshina Kannada, Karnataka
+                <strong>Jurisdiction:</strong> {JURISDICTION}
               </p>
             </div>
           </div>

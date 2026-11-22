@@ -1,3 +1,5 @@
+import { SITE_URL } from '../master.js'
+
 export const demoUser = {
   name: 'Rohan Shetty',
   initials: 'RS',
@@ -7,7 +9,7 @@ export const demoUser = {
   trustScore: 28,
   totalPoints: 640,
   badge: 'Trusted Pro',
-  affiliateLink: 'https://sevamein.com/ref/ROHAN10',
+  affiliateLink: `${SITE_URL}/ref/ROHAN10`,
 }
 
 export const CATEGORIES = [

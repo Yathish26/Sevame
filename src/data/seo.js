@@ -1,4 +1,6 @@
-export const SITE_URL = 'https://sevamein.com'
+import { SITE_URL } from '../master.js'
+
+export { SITE_URL }
 export const SITE_NAME = 'Seva Mein'
 export const DEFAULT_IMAGE = `${SITE_URL}/logo.png`
 
