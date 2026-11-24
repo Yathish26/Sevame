@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useApp } from '../context/app-context.js'
 
 const links = [
@@ -11,7 +11,10 @@ const links = [
 ]
 
 function Navbar() {
-  const { user, openModal } = useApp()
+  const { user, authReady, openModal } = useApp()
+  const { pathname } = useLocation()
+  const onAuthPage = pathname === '/login' || pathname === '/register'
+  const loginHref = onAuthPage || pathname === '/' ? '/login' : `/login?next=${encodeURIComponent(pathname)}`
 
   return (
     <header className="sticky top-0 z-40 glass-bar bg-white/85 border-b border-slate-200/70 shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
@@ -30,7 +33,7 @@ function Navbar() {
 
           {/* Desktop navigation */}
           <nav className="hidden lg:flex items-center gap-1 text-sm font-semibold text-slate-600 bg-slate-100/60 p-1 rounded-full" aria-label="Main Navigation">
-            {links.map(({ to, label }) => (
+            {(user?.role === 'admin' ? [...links, { to: '/admin', label: 'Admin' }] : links).map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -48,19 +51,31 @@ function Navbar() {
 
           {/* Always-visible quick actions */}
           <div className="flex items-center gap-1.5 sm:gap-2.5">
-            <button
-              type="button"
-              onClick={() => openModal('kyc')}
-              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-br from-emerald-50 to-teal-50 text-emerald-800 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all"
-              title="DigiLocker KYC Status"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span className="hidden min-[400px]:inline">{user.kycVerified ? 'KYC Verified' : 'Get KYC'}</span>
-              <span className="min-[400px]:hidden">KYC</span>
-            </button>
+            {user ? (
+              <button
+                type="button"
+                onClick={() => openModal('kyc')}
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-br from-emerald-50 to-teal-50 text-emerald-800 border border-emerald-200 hover:border-emerald-300 hover:shadow-md transition-all"
+                title="DigiLocker KYC Status"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span className="hidden min-[400px]:inline">{user.kycVerified ? 'KYC Verified' : 'Get KYC'}</span>
+                <span className="min-[400px]:hidden">KYC</span>
+              </button>
+            ) : (
+              <Link
+                to={loginHref}
+                aria-disabled={!authReady}
+                className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-br from-[#0F5257] to-teal-800 text-white hover:shadow-md transition-all ${
+                  authReady ? '' : 'opacity-60 pointer-events-none'
+                }`}
+              >
+                Sign in
+              </Link>
+            )}
 
             <button
               type="button"

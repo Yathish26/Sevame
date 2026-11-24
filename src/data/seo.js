@@ -1,8 +1,4 @@
-import { SITE_URL } from '../master.js'
-
-export { SITE_URL }
-export const SITE_NAME = 'Seva Mein'
-export const DEFAULT_IMAGE = `${SITE_URL}/logo.png`
+// Per-route page titles/descriptions. The site URL comes from Admin → Panel (see RouteSeo.jsx).
 
 const DEFAULT = {
   title: 'Seva Mein — Get Help Nearby in Mangaluru | Peer-to-Peer Tasks & Local Jobs',
@@ -42,6 +38,26 @@ export const ROUTE_SEO = {
     title: 'Terms & Conditions | Seva Mein',
     description:
       'The rules for posting, accepting and completing tasks on Seva Mein in Mangaluru, including intermediary role, Trust Score and affiliate terms.',
+  },
+  '/login': {
+    title: 'Sign in | Seva Mein',
+    description: 'Sign in to Seva Mein to post requests, accept nearby tasks in Mangaluru and track your Trust Score.',
+    noindex: true,
+  },
+  '/register': {
+    title: 'Create your account | Seva Mein',
+    description: 'Join Seva Mein free — get help nearby in Mangaluru or earn by helping your neighbours.',
+    noindex: true,
+  },
+  '/admin': {
+    title: 'Admin Dashboard | Seva Mein',
+    description: 'Seva Mein admin dashboard.',
+    noindex: true,
+  },
+  '/admin/login': {
+    title: 'Admin Sign in | Seva Mein',
+    description: 'Seva Mein admin sign in.',
+    noindex: true,
   },
   '/profile': {
     title: 'My Profile | Seva Mein',

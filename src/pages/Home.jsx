@@ -4,6 +4,8 @@ import { useApp } from '../context/app-context.js'
 import { CATEGORIES, HOME_AREAS } from '../data/demo.js'
 import JobCard from '../components/JobCard.jsx'
 import { MetricCards, ProfileHeader } from '../components/ProfileCard.jsx'
+import SignInCard from '../components/SignInCard.jsx'
+import FeedStatus from '../components/FeedStatus.jsx'
 
 function Hero() {
   const { openModal } = useApp()
@@ -114,9 +116,11 @@ function Hero() {
 }
 
 function AffiliateCard() {
-  const { user, showToast } = useApp()
+  const { user, showToast, requireLogin } = useApp()
+  const link = user?.affiliateLink || ''
 
   const copy = async () => {
+    if (!requireLogin('Sign in to get your referral link.')) return
     try {
       await navigator.clipboard.writeText(user.affiliateLink)
       showToast('Affiliate link copied! Earn 10% once after referral completes first task.', 'success')
@@ -154,7 +158,8 @@ function AffiliateCard() {
             id="affiliateInput"
             type="text"
             readOnly
-            value={user.affiliateLink}
+            value={link}
+            placeholder="Sign in to get your link"
             onFocus={(e) => e.target.select()}
             className="w-full min-w-0 bg-transparent px-2.5 py-1.5 text-xs sm:text-sm font-bold text-slate-800 focus:outline-none"
           />
@@ -178,7 +183,7 @@ function AffiliateCard() {
 }
 
 function Home() {
-  const { jobs } = useApp()
+  const { jobs, jobsStatus, refreshJobs, user } = useApp()
   const navigate = useNavigate()
   const [activeArea, setActiveArea] = useState('All')
 
@@ -191,14 +196,20 @@ function Home() {
       {/* Profile + affiliate */}
       <div className="grid lg:grid-cols-12 gap-6 items-stretch">
         <div className="lg:col-span-7 bg-white/90 backdrop-blur-sm rounded-[1.75rem] border border-slate-200/80 p-5 sm:p-6 shadow-lg shadow-slate-200/50 card-lift flex flex-col justify-between gap-5">
-          <ProfileHeader
-            actions={
-              <Link to="/profile" className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
-                Full Profile
-              </Link>
-            }
-          />
-          <MetricCards />
+          {user ? (
+            <>
+              <ProfileHeader
+                actions={
+                  <Link to="/profile" className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+                    Full Profile
+                  </Link>
+                }
+              />
+              <MetricCards />
+            </>
+          ) : (
+            <SignInCard className="h-full" />
+          )}
         </div>
         <AffiliateCard />
       </div>
@@ -260,7 +271,9 @@ function Home() {
           </div>
         </div>
 
-        {filtered.length > 0 ? (
+        {jobsStatus !== 'ready' ? (
+          <FeedStatus status={jobsStatus} onRetry={refreshJobs} />
+        ) : filtered.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map((job) => (
               <JobCard key={job.id} job={job} />

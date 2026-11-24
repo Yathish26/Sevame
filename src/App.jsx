@@ -17,6 +17,10 @@ import Policies from './pages/Policies.jsx'
 import Profile from './pages/Profile.jsx'
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import TermsAndConditions from './pages/TermsAndConditions.jsx'
+import RefCapture from './pages/RefCapture.jsx'
+import AuthPage from './pages/AuthPage.jsx'
+import Admin from './pages/Admin.jsx'
+import AdminLogin from './pages/AdminLogin.jsx'
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation()
@@ -54,6 +58,11 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+              <Route path="/login" element={<AuthPage mode="login" />} />
+              <Route path="/register" element={<AuthPage mode="register" />} />
+              <Route path="/ref/:code" element={<RefCapture />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="*" element={<Home />} />
             </Routes>
           </main>

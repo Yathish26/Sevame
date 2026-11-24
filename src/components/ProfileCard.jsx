@@ -41,13 +41,8 @@ export function TrustRing({ score }) {
 }
 
 export function MetricCards() {
-  const { user, openModal, earnPoints, showToast } = useApp()
+  const { user, openModal } = useApp()
   const tier = trustTier(user.trustScore)
-
-  const simulate = () => {
-    earnPoints()
-    showToast('+15 Total Points (+5 completion, +10 5★ review) credited!', 'success')
-  }
 
   return (
     <div className="grid sm:grid-cols-2 gap-4">
@@ -91,15 +86,6 @@ export function MetricCards() {
         <p className="text-[11px] text-amber-950/80 leading-snug relative z-10">
           Lifetime reputation: <strong>+5 pts</strong> per completed task &amp; <strong>+10 pts</strong> per 5-star peer review.
         </p>
-        <div className="pt-0.5 relative z-10">
-          <button
-            type="button"
-            onClick={simulate}
-            className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500/30 to-amber-400/20 hover:from-amber-500/40 hover:to-amber-400/30 text-amber-950 transition-all hover:scale-105 active:scale-95 shadow-sm"
-          >
-            + Simulate 5★ Task (+15 Pts)
-          </button>
-        </div>
       </div>
     </div>
   )
@@ -121,22 +107,32 @@ export function ProfileHeader({ actions }) {
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 font-display">{user.name}</h2>
-            <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
-              Demo User • {user.username}
-            </span>
+            <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200">{user.username}</span>
           </div>
           <p className="text-xs sm:text-sm text-slate-600 mt-0.5 flex items-start gap-1.5">
             <span>📍</span>
             <span>
-              <strong>Demo Address:</strong> {user.address} <span className="text-slate-400">(Private)</span>
+              {user.address || user.area ? (
+                <>
+                  {user.address || user.area} <span className="text-slate-400">(Private)</span>
+                </>
+              ) : (
+                <span className="text-slate-400">No address added yet</span>
+              )}
             </span>
           </p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 self-start sm:self-center">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-800 border border-emerald-200 shadow-sm">
-          <span>✓</span> {user.kycVerified ? 'KYC Verified' : 'KYC Pending'}
+        <span
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border shadow-sm ${
+            user.kycVerified
+              ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-800 border-emerald-200'
+              : 'bg-gradient-to-r from-amber-50 to-orange-50 text-amber-900 border-amber-200'
+          }`}
+        >
+          <span>{user.kycVerified ? '✓' : '!'}</span> {user.kycVerified ? 'KYC Verified' : 'KYC Pending'}
         </span>
         {actions}
       </div>

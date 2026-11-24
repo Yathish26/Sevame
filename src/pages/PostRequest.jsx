@@ -24,10 +24,11 @@ const labelCls = 'block text-xs font-bold text-slate-700 mb-1'
 const fieldCls = 'field px-4 py-3 rounded-2xl'
 
 function PostRequest() {
-  const { user, addJob, showToast } = useApp()
+  const { postTask, showToast, requireLogin } = useApp()
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [form, setForm] = useState(INITIAL)
+  const [publishing, setPublishing] = useState(false)
 
   const update = (key, value) => setForm((f) => ({ ...f, [key]: value }))
 
@@ -40,36 +41,37 @@ function PostRequest() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const publish = () => {
+  const publish = async () => {
     if (!form.consent) {
       showToast('Please check "I Accept & Proceed" to confirm safety and intermediary terms.', 'error')
       return
     }
+    if (!requireLogin('Sign in to publish your request — your draft is kept.')) return
+
     const reward = Number(form.reward) || 200
-    const maxBudget = Math.max(reward, Number(form.maxLimit) || reward)
-    const job = {
-      id: 'SM-' + Math.floor(200 + Math.random() * 799),
-      title: form.title.trim(),
-      category: form.category,
-      area: form.area,
-      coverageKm: Number(form.radius) || 5,
-      reward,
-      maxBudget,
-      urgency: form.urgency,
-      deadline: form.deadline.trim() || 'Tomorrow',
-      description: form.description.trim(),
-      posterName: user.name,
-      posterUsername: user.username,
-      posterKyc: user.kycVerified,
-      posterTrust: user.trustScore,
-      posterTotalPoints: user.totalPoints,
-      posterBadge: user.badge,
+    setPublishing(true)
+    try {
+      const task = await postTask({
+        title: form.title.trim(),
+        description: form.description.trim(),
+        category: form.category,
+        area: form.area,
+        coverageKm: Number(form.radius) || 5,
+        reward,
+        maxBudget: Math.max(reward, Number(form.maxLimit) || reward),
+        urgency: form.urgency,
+        deadline: form.deadline.trim() || 'Tomorrow',
+        consent: true,
+      })
+      setForm(INITIAL)
+      setStep(1)
+      showToast(`Task "${task.title}" published live to Mangaluru feed!`, 'success')
+      navigate('/')
+    } catch (err) {
+      showToast(err.message, 'error')
+    } finally {
+      setPublishing(false)
     }
-    addJob(job)
-    setForm(INITIAL)
-    setStep(1)
-    showToast(`Task "${job.title}" published live to Mangaluru feed!`, 'success')
-    navigate('/')
   }
 
   return (
@@ -163,7 +165,7 @@ function PostRequest() {
                 className="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#0F5257] file:text-white hover:file:bg-teal-900 file:transition-colors file:cursor-pointer cursor-pointer"
               />
               <p className="text-[11px] text-slate-500">
-                {form.photoName ? `Attached: ${form.photoName} (ready for task preview)` : 'Upload an item or venue reference photo (no personal IDs).'}
+                {form.photoName ? `Selected: ${form.photoName} (photo uploads are coming soon — not sent yet)` : 'Upload an item or venue reference photo (no personal IDs).'}
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3 pt-2">
@@ -305,9 +307,10 @@ function PostRequest() {
               <button
                 type="button"
                 onClick={publish}
-                className="py-3 rounded-full text-sm font-extrabold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                disabled={publishing}
+                className="py-3 rounded-full text-sm font-extrabold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 shadow-lg shadow-amber-500/25 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
               >
-                Publish Task
+                {publishing ? 'Publishing…' : 'Publish Task'}
               </button>
             </div>
           </div>

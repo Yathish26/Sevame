@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useApp } from '../context/app-context.js'
 import { TRUST_RULES } from '../data/demo.js'
-import { EMERGENCY_NUMBER } from '../master.js'
+import { getCoords } from '../lib/api.js'
+import SignInCard from './SignInCard.jsx'
+import AuthForm from './AuthForm.jsx'
 
 const MANGALURU_PIN = '12.8855°N, 74.8388°E'
 
@@ -46,29 +48,56 @@ function ModalShell({ title, onClose, children, size = 'max-w-md', danger = fals
   )
 }
 
+const primaryBtn =
+  'px-4 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-[#0F5257] to-teal-800 hover:from-teal-900 hover:to-teal-700 text-white shadow-md transition-all hover:scale-105 active:scale-95 disabled:opacity-60 disabled:hover:scale-100'
+
 /* ---------- Task acceptance + consent + OTP ---------- */
 function AcceptTaskModal() {
-  const { selectedJob: job, user, closeModal, showToast, earnPoints } = useApp()
+  const { selectedJob: job, user, closeModal, showToast, acceptTask, completeTask, requireLogin } = useApp()
   const [c1, setC1] = useState(false)
   const [c2, setC2] = useState(false)
   const [auditMeta, setAuditMeta] = useState('')
+  const [otp, setOtp] = useState('')
+  const [busy, setBusy] = useState(false)
 
   if (!job) return null
 
-  const confirmConsent = () => {
+  const confirmConsent = async () => {
     if (!c1 || !c2) {
       showToast('Both safety and intermediary consent checkboxes are required.', 'error')
       return
     }
-    const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
-    setAuditMeta(`Audit Log: User ${user.username} | Task ${job.id} | IP 103.160.x.x | GPS ${MANGALURU_PIN} (Mangaluru) | ${now}`)
-    showToast('Consent logged! Start OTP generated.', 'success')
+    if (!requireLogin('Sign in to accept tasks.')) return
+    setBusy(true)
+    try {
+      const coords = await getCoords()
+      const { consentLog } = await acceptTask(job.id, coords)
+      const when = new Date(consentLog.at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+      const gps = consentLog.lat != null ? `${consentLog.lat.toFixed(4)}°N, ${consentLog.lng.toFixed(4)}°E` : `${MANGALURU_PIN} (approx.)`
+      setAuditMeta(`Audit Log: User ${user.username} | Task ${job.id} | IP ${consentLog.ip || 'logged'} | GPS ${gps} | ${when}`)
+      showToast('Consent logged! Task is now yours.', 'success')
+    } catch (err) {
+      showToast(err.message, 'error')
+    } finally {
+      setBusy(false)
+    }
   }
 
-  const complete = () => {
-    earnPoints()
-    closeModal()
-    showToast('OTP verified! Task completed & +15 Total Points added.', 'success')
+  const complete = async () => {
+    if (!/^\d{4}$/.test(otp)) {
+      showToast('Enter the 4-digit OTP the poster gives you.', 'warn')
+      return
+    }
+    setBusy(true)
+    try {
+      const data = await completeTask(job.id, otp)
+      closeModal()
+      showToast(data.message, 'success')
+    } catch (err) {
+      showToast(err.message, 'error')
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -114,26 +143,41 @@ function AcceptTaskModal() {
           <button
             type="button"
             onClick={confirmConsent}
-            className="w-full py-3 rounded-xl text-sm font-extrabold bg-gradient-to-r from-[#0F5257] to-teal-800 hover:from-teal-900 hover:to-teal-700 text-white shadow-lg shadow-teal-900/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+            disabled={busy}
+            className="w-full py-3 rounded-xl text-sm font-extrabold bg-gradient-to-r from-[#0F5257] to-teal-800 hover:from-teal-900 hover:to-teal-700 text-white shadow-lg shadow-teal-900/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
           >
-            I Accept &amp; Proceed
+            {busy ? 'Logging consent…' : 'I Accept & Proceed'}
           </button>
         </div>
       ) : (
         <div className="space-y-3 p-4 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50/50 border border-emerald-200/80 text-xs">
-          <p className="font-extrabold text-emerald-950">✓ Consent Logged! Active Task Handshake Ready</p>
+          <p className="font-extrabold text-emerald-950">✓ Consent Logged! Task Accepted</p>
           <p className="text-emerald-800 font-mono text-[11px] break-words">{auditMeta}</p>
-          <div className="p-3 rounded-xl bg-white/80 border border-emerald-200 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+          <p className="text-emerald-900">
+            When the task is done, ask <strong>{job.posterName}</strong> for their 4-digit completion OTP. You can also finish it later from your Profile.
+          </p>
+          <div className="p-3 rounded-xl bg-white/80 border border-emerald-200 flex flex-wrap items-end justify-between gap-3 shadow-sm">
             <div>
-              <p className="text-slate-500">Start / Completion OTP</p>
-              <p className="text-lg font-extrabold tracking-widest text-slate-900 font-mono">4829</p>
+              <label htmlFor="acceptOtp" className="block text-slate-500 mb-1">
+                Completion OTP
+              </label>
+              <input
+                id="acceptOtp"
+                inputMode="numeric"
+                maxLength={4}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                placeholder="••••"
+                className="field w-28 px-3 py-2 rounded-xl text-lg font-extrabold tracking-widest font-mono"
+              />
             </div>
             <button
               type="button"
               onClick={complete}
-              className="px-3.5 py-2 rounded-xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white shadow-md transition-all hover:scale-105 active:scale-95"
+              disabled={busy}
+              className="px-3.5 py-2 rounded-xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white shadow-md transition-all hover:scale-105 active:scale-95 disabled:opacity-60"
             >
-              Verify OTP &amp; Complete (+15 Pts)
+              Verify OTP &amp; Complete (+5 Pts)
             </button>
           </div>
         </div>
@@ -144,27 +188,27 @@ function AcceptTaskModal() {
 
 /* ---------- SOS ---------- */
 function SosModal() {
-  const { user, closeModal, showToast } = useApp()
+  const { user, closeModal, showToast, logSos, site } = useApp()
+  const EMERGENCY_NUMBER = site.emergencyNumber
   const [status, setStatus] = useState('Coordinates: Ready to capture Mangaluru GPS pin...')
+  const [busy, setBusy] = useState(false)
 
-  const triggerSos = () => {
-    const stamp = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })
-    if (!navigator.geolocation) {
-      setStatus(`ALERT SENT at ${stamp} • Mangaluru Zone Pin logged`)
-      showToast('SOS location pin logged with Seva Mein Safety Desk!', 'error')
-      return
-    }
+  const triggerSos = async () => {
+    setBusy(true)
     setStatus('Capturing GPS…')
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setStatus(`ALERT SENT at ${stamp} • GPS: ${pos.coords.latitude.toFixed(4)}°N, ${pos.coords.longitude.toFixed(4)}°E`)
-        showToast('SOS GPS coordinates logged & safety alert triggered!', 'error')
-      },
-      () => {
-        setStatus(`ALERT SENT at ${stamp} • Mangaluru Zone Pin (${MANGALURU_PIN}) logged`)
-        showToast('SOS location pin logged with Seva Mein Safety Desk!', 'error')
-      },
-    )
+    const coords = await getCoords()
+    const where = coords ? `GPS: ${coords.lat.toFixed(4)}°N, ${coords.lng.toFixed(4)}°E` : `Mangaluru Zone Pin (${MANGALURU_PIN})`
+    try {
+      await logSos(coords)
+      const stamp = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })
+      setStatus(`ALERT SENT at ${stamp} • ${where} logged`)
+      showToast('SOS logged with the Seva Mein Safety Desk!', 'error')
+    } catch {
+      setStatus(`Could not reach the safety desk • ${where}. Call ${EMERGENCY_NUMBER} now.`)
+      showToast(`SOS could not be sent. Call ${EMERGENCY_NUMBER} directly.`, 'error')
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -186,9 +230,7 @@ function SosModal() {
         coordinates and alert Seva Mein&apos;s safety desk.
       </p>
       <div className="p-3.5 rounded-2xl bg-gradient-to-br from-rose-50 to-pink-50/50 border border-rose-200/80 text-xs space-y-1">
-        <p className="font-bold text-rose-950">
-          User: {user.name} ({user.username})
-        </p>
+        <p className="font-bold text-rose-950">{user ? `User: ${user.name} (${user.username})` : 'Not signed in — alert is logged anonymously'}</p>
         <p className="text-rose-800">{status}</p>
       </div>
       <div className="grid grid-cols-2 gap-2.5">
@@ -201,9 +243,10 @@ function SosModal() {
         <button
           type="button"
           onClick={triggerSos}
-          className="py-3 rounded-xl text-xs font-extrabold bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white shadow-md transition-all hover:scale-105 active:scale-95"
+          disabled={busy}
+          className="py-3 rounded-xl text-xs font-extrabold bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white shadow-md transition-all hover:scale-105 active:scale-95 disabled:opacity-60"
         >
-          Log GPS &amp; Alert
+          {busy ? 'Sending…' : 'Log GPS & Alert'}
         </button>
       </div>
     </ModalShell>
@@ -216,19 +259,29 @@ const MODAL_TICKET_CATEGORIES = [
   'Task Dispute / Payment Issue',
   'Trust Score Appeal',
   'Affiliate 10% Transfer Support',
+  'Harrasment and Sexual Misconduct'
 ]
 
 function TicketModal() {
-  const { closeModal, addTicket, showToast } = useApp()
+  const { closeModal, addTicket, showToast, requireLogin } = useApp()
   const [cat, setCat] = useState(MODAL_TICKET_CATEGORIES[0])
   const [text, setText] = useState('')
+  const [busy, setBusy] = useState(false)
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     if (!text.trim()) return
-    addTicket(cat, text.trim())
-    closeModal()
-    showToast('Complaint / Ticket logged successfully.', 'success')
+    if (!requireLogin('Sign in to raise a ticket.')) return
+    setBusy(true)
+    try {
+      await addTicket(cat, text.trim())
+      closeModal()
+      showToast('Complaint / Ticket logged successfully.', 'success')
+    } catch (err) {
+      showToast(err.message, 'error')
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -262,11 +315,8 @@ function TicketModal() {
           <button type="button" onClick={closeModal} className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
             Cancel
           </button>
-          <button
-            type="submit"
-            className="px-5 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-[#0F5257] to-teal-800 hover:from-teal-900 hover:to-teal-700 text-white shadow-md transition-all hover:scale-105 active:scale-95"
-          >
-            Submit Ticket
+          <button type="submit" disabled={busy} className={primaryBtn}>
+            {busy ? 'Submitting…' : 'Submit Ticket'}
           </button>
         </div>
       </form>
@@ -277,11 +327,27 @@ function TicketModal() {
 /* ---------- KYC ---------- */
 function KycModal() {
   const { user, closeModal, verifyKyc, showToast } = useApp()
+  const [busy, setBusy] = useState(false)
 
-  const simulate = () => {
-    verifyKyc()
-    closeModal()
-    showToast(`DigiLocker KYC callback verified! Trust Score active at ${user.trustScore}/30.`, 'success')
+  if (!user) {
+    return (
+      <ModalShell title="DigiLocker KYC Verification" onClose={closeModal}>
+        <SignInCard title="Sign in first" text="KYC is linked to your Seva Mein account. Sign in or create one to verify." />
+      </ModalShell>
+    )
+  }
+
+  const simulate = async () => {
+    setBusy(true)
+    try {
+      const updated = await verifyKyc()
+      closeModal()
+      showToast(`DigiLocker KYC callback verified! Trust Score active at ${updated?.trustScore ?? user.trustScore}/30.`, 'success')
+    } catch (err) {
+      showToast(err.message, 'warn')
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -289,11 +355,13 @@ function KycModal() {
       <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50/50 border border-emerald-200/80 space-y-1.5 text-xs text-emerald-950 shadow-sm">
         <p className="font-extrabold">Current Status: {user.kycVerified ? 'Verified via DigiLocker API' : 'Pending verification'}</p>
         <p>
-          <strong>Verified Name:</strong> {user.name}
+          <strong>Name:</strong> {user.name}
         </p>
-        <p>
-          <strong>City / Pincode:</strong> Mangaluru, 575004
-        </p>
+        {user.area && (
+          <p>
+            <strong>Area:</strong> {user.area}, Mangaluru
+          </p>
+        )}
         <p>
           <strong>Privacy Guardrail:</strong> Raw Aadhaar number is never stored on Seva Mein servers.
         </p>
@@ -305,12 +373,8 @@ function KycModal() {
         <button type="button" onClick={closeModal} className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
           Close
         </button>
-        <button
-          type="button"
-          onClick={simulate}
-          className="px-4 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-[#0F5257] to-teal-800 hover:from-teal-900 hover:to-teal-700 text-white shadow-md transition-all hover:scale-105 active:scale-95"
-        >
-          Simulate DigiLocker Re-Check
+        <button type="button" onClick={simulate} disabled={busy} className={primaryBtn}>
+          {busy ? 'Checking…' : 'Simulate DigiLocker Re-Check'}
         </button>
       </div>
     </ModalShell>
@@ -345,9 +409,41 @@ function TrustRulesModal() {
   )
 }
 
+/* ---------- Sign in / Register ---------- */
+// Pop-up version of /login and /register, used mid-flow (posting, accepting, tickets) so drafts aren't lost.
+function AuthModal() {
+  const { closeModal } = useApp()
+  const [mode, setMode] = useState('login')
+
+  return (
+    <ModalShell title={mode === 'login' ? 'Sign in' : 'Create account'} onClose={closeModal}>
+      <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-slate-100 text-xs font-bold">
+        {[
+          ['login', 'Sign in'],
+          ['register', 'Create account'],
+        ].map(([key, text]) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setMode(key)}
+            aria-pressed={mode === key}
+            className={`py-2 rounded-lg transition-all ${mode === key ? 'bg-white text-[#0F5257] shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+          >
+            {text}
+          </button>
+        ))}
+      </div>
+
+      <AuthForm key={mode} mode={mode} onSwitch={setMode} onDone={closeModal} />
+    </ModalShell>
+  )
+}
+
 function Modals() {
   const { activeModal } = useApp()
   switch (activeModal) {
+    case 'auth':
+      return <AuthModal />
     case 'acceptTask':
       return <AcceptTaskModal />
     case 'sos':

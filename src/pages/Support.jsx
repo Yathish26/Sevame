@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useApp } from '../context/app-context.js'
-import { EMERGENCY_NUMBER, GRIEVANCE_EMAIL, GRIEVANCE_OFFICER_NAME, JURISDICTION } from '../master.js'
 
 const TICKET_TYPES = [
   'Task Dispute / No-Show',
@@ -14,21 +13,35 @@ const fieldCls = 'field px-3.5 py-2.5 rounded-xl'
 const labelCls = 'block text-xs font-bold text-slate-700 mb-1'
 
 function Support() {
-  const { tickets, addTicket, showToast, openModal } = useApp()
+  const { user, tickets, addTicket, showToast, openModal, requireLogin, site } = useApp()
+  const {
+    emergencyNumber: EMERGENCY_NUMBER,
+    grievanceOfficerName: GRIEVANCE_OFFICER_NAME,
+    grievanceEmail: GRIEVANCE_EMAIL,
+    jurisdiction: JURISDICTION,
+  } = site
   const [type, setType] = useState(TICKET_TYPES[0])
   const [ref, setRef] = useState('')
   const [desc, setDesc] = useState('')
+  const [busy, setBusy] = useState(false)
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     const d = desc.trim()
     if (!d) return
-    const r = ref.trim()
-    addTicket(type, r ? `${r} — ${d}` : d)
-    setType(TICKET_TYPES[0])
-    setRef('')
-    setDesc('')
-    showToast('Support ticket submitted! Our Mangaluru desk will review shortly.', 'success')
+    if (!requireLogin('Sign in to submit a ticket — your text is kept.')) return
+    setBusy(true)
+    try {
+      await addTicket(type, d, ref.trim())
+      setType(TICKET_TYPES[0])
+      setRef('')
+      setDesc('')
+      showToast('Support ticket submitted! Our Mangaluru desk will review shortly.', 'success')
+    } catch (err) {
+      showToast(err.message, 'error')
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -87,15 +100,19 @@ function Support() {
             </div>
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-[#0F5257] to-teal-800 hover:from-teal-900 hover:to-teal-700 text-white shadow-md transition-all hover:scale-[1.01] active:scale-[0.99]"
+              disabled={busy}
+              className="px-6 py-3 rounded-xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-[#0F5257] to-teal-800 hover:from-teal-900 hover:to-teal-700 text-white shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
             >
-              Submit Support Ticket
+              {busy ? 'Submitting…' : 'Submit Support Ticket'}
             </button>
           </form>
 
           <div className="pt-4 border-t border-slate-100 space-y-2.5">
             <h2 className="text-xs font-extrabold uppercase tracking-wider text-slate-500">Your Recent Tickets</h2>
             <div className="space-y-2">
+              {tickets.length === 0 && (
+                <p className="text-xs text-slate-500">{user ? 'No tickets yet.' : 'Sign in to see your tickets.'}</p>
+              )}
               {tickets.map((t) => (
                 <div
                   key={t.id}

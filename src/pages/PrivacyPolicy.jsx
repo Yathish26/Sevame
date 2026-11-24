@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom'
 import { PolicyPage, PrivacySection } from '../components/PolicySections.jsx'
-import { GRIEVANCE_EMAIL, GRIEVANCE_OFFICER_NAME, JURISDICTION } from '../master.js'
+import { useApp } from '../context/app-context.js'
 
 function PrivacyPolicy() {
+  const { site } = useApp()
+  const { grievanceOfficerName: GRIEVANCE_OFFICER_NAME, grievanceEmail: GRIEVANCE_EMAIL, jurisdiction: JURISDICTION } = site
+
   return (
     <PolicyPage
       kicker="Legal & Governance Charter"

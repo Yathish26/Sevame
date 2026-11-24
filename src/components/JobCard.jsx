@@ -7,8 +7,9 @@ const urgencyColors = {
 }
 
 function JobCard({ job }) {
-  const { openAcceptModal } = useApp()
+  const { user, openAcceptModal } = useApp()
   const urgClass = urgencyColors[job.urgency] || urgencyColors.Normal
+  const isMine = !!user && job.posterUsername === user.username
 
   return (
     <article className="bg-white/90 backdrop-blur-sm rounded-[1.75rem] border border-slate-200/80 p-5 shadow-lg shadow-slate-200/40 card-lift flex flex-col justify-between gap-4 animate-fade-up">
@@ -61,13 +62,17 @@ function JobCard({ job }) {
               ₹{job.reward} <span className="text-[11px] font-normal text-slate-500">(Max ₹{job.maxBudget})</span>
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => openAcceptModal(job)}
-            className="px-4 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-[#0F5257] to-teal-800 hover:from-teal-900 hover:to-teal-700 text-white shadow-md shadow-teal-900/20 transition-all hover:scale-105 active:scale-95"
-          >
-            Accept / Apply
-          </button>
+          {isMine ? (
+            <span className="px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">Your request</span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => openAcceptModal(job)}
+              className="px-4 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-[#0F5257] to-teal-800 hover:from-teal-900 hover:to-teal-700 text-white shadow-md shadow-teal-900/20 transition-all hover:scale-105 active:scale-95"
+            >
+              Accept / Apply
+            </button>
+          )}
         </div>
       </div>
     </article>

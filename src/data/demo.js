@@ -1,16 +1,5 @@
-import { SITE_URL } from '../master.js'
-
-export const demoUser = {
-  name: 'Rohan Shetty',
-  initials: 'RS',
-  username: '@rohan_mangalore',
-  address: 'Bejai Church Road, Mangaluru, 575004',
-  kycVerified: true,
-  trustScore: 28,
-  totalPoints: 640,
-  badge: 'Trusted Pro',
-  affiliateLink: `${SITE_URL}/ref/ROHAN10`,
-}
+// Static lists for the UI. Live users, tasks and tickets come from the API (src/lib/api.js).
+// Keep CATEGORIES and the area values in sync with habackend/sevamein/data/constants.js.
 
 export const CATEGORIES = [
   { name: 'Quick jobs', emoji: '⚡', tint: 'from-amber-50 to-amber-100', hint: 'Short 1–3 hr campus or city tasks' },
@@ -43,134 +32,9 @@ export const POST_AREAS = [
   { value: 'St. Aloysius / Light House Hill', label: 'St. Aloysius / Light House Hill' },
 ]
 
-export const initialJobs = [
-  {
-    id: 'SM-101',
-    title: 'NITK Tech Fest Registration Desk & Crowd Help',
-    category: 'Quick jobs',
-    area: 'Surathkal',
-    coverageKm: 4,
-    reward: 350,
-    maxBudget: 450,
-    urgency: 'High',
-    deadline: 'Today, 4:30 PM',
-    description: 'Assist student coordinators with participant badge check-in and auditorium seating near NITK Surathkal main gate.',
-    posterName: 'Ananya Rao',
-    posterUsername: '@ananya_nitk',
-    posterKyc: true,
-    posterTrust: 30,
-    posterTotalPoints: 1120,
-    posterBadge: 'Elite Pillar',
-  },
-  {
-    id: 'SM-102',
-    title: 'Bound Engineering Lab Manual & Notes Pickup',
-    category: 'Deliveries & collections',
-    area: 'Bejai',
-    coverageKm: 3,
-    reward: 180,
-    maxBudget: 250,
-    urgency: 'Normal',
-    deadline: 'Tomorrow, 11:00 AM',
-    description: 'Collect spiral-bound project reports from Bejai copy center and hand over at St. Aloysius College gate.',
-    posterName: 'Karthik Shenoy',
-    posterUsername: '@karthik_bejai',
-    posterKyc: true,
-    posterTrust: 29,
-    posterTotalPoints: 410,
-    posterBadge: 'Trusted Pro',
-  },
-  {
-    id: 'SM-103',
-    title: 'Urgent Document Queue Assistance at Hampankatta',
-    category: 'Urgent tasks',
-    area: 'Hampankatta',
-    coverageKm: 5,
-    reward: 250,
-    maxBudget: 350,
-    urgency: 'High',
-    deadline: 'Today, 2:30 PM',
-    description: 'Hold queue token at a routine public submission counter near Hampankatta Clock Tower for 60–90 minutes.',
-    posterName: 'Priya D’Souza',
-    posterUsername: '@priya_aloysius',
-    posterKyc: true,
-    posterTrust: 30,
-    posterTotalPoints: 295,
-    posterBadge: 'Trusted Pro',
-  },
-  {
-    id: 'SM-104',
-    title: 'Lost Student ID & Keychain Near Kadri Park',
-    category: 'Lost & found',
-    area: 'Kadri',
-    coverageKm: 2,
-    reward: 300,
-    maxBudget: 500,
-    urgency: 'Normal',
-    deadline: 'Within 24 hrs',
-    description: 'Misplaced a blue lanyard with college ID and two keys between Kadri Park entrance and Mallikatte junction.',
-    posterName: 'Vinay Alva',
-    posterUsername: '@vinay_kottara',
-    posterKyc: true,
-    posterTrust: 27,
-    posterTotalPoints: 145,
-    posterBadge: 'Verified Regular',
-  },
-  {
-    id: 'SM-105',
-    title: '1-Hour Excel & Data Formatting Tutor for Project',
-    category: 'Local services',
-    area: 'Kottara',
-    coverageKm: 6,
-    reward: 300,
-    maxBudget: 400,
-    urgency: 'Low',
-    deadline: 'This Weekend',
-    description: 'Need help cleaning survey CSV sheets and creating pivot charts at a public café near Kottara Chowki.',
-    posterName: 'Meghana Hegde',
-    posterUsername: '@meghana_kudla',
-    posterKyc: true,
-    posterTrust: 30,
-    posterTotalPoints: 520,
-    posterBadge: 'Trusted Pro',
-  },
-  {
-    id: 'SM-106',
-    title: 'Reward: Source 15 Rental Chairs for Campus Workshop',
-    category: 'Reward requests',
-    area: 'Deralakatte',
-    coverageKm: 8,
-    reward: 450,
-    maxBudget: 600,
-    urgency: 'Normal',
-    deadline: 'Friday, 10:00 AM',
-    description: 'Connect us with a reliable local event supplier near Deralakatte / Yenepoya for 15 folding chairs.',
-    posterName: 'Siddharth Nayak',
-    posterUsername: '@sid_yenepoya',
-    posterKyc: true,
-    posterTrust: 28,
-    posterTotalPoints: 90,
-    posterBadge: 'Verified Regular',
-  },
-]
-
-export const initialTickets = [
-  {
-    id: '#TKT-2091',
-    title: 'Affiliate 10% One-Time Transfer Verification',
-    summary: 'Referral @sanjana_nitk completed first task • ₹35 credited',
-    status: 'Resolved',
-  },
-]
-
 export const TRUST_RULES = [
   ['Hard Cap at 30:', 'Every verified user starts at 30/30 and cannot exceed 30 points.'],
   ['-5 Deduction:', 'Verified complaints, no-shows, or minor rule breaches deduct 5 points.'],
   ['Below 10 Points (Low Trust):', 'Restricted to lowest matching priority and recovery points count at 50% value until back to 10+.'],
   ['Two-Strike Ban:', 'First 0/30 = 30-day suspension. Second 0/30 (or severe illegal breach) = permanent KYC-linked ban.'],
-]
-
-export const recentActivity = [
-  { label: 'NITK Surathkal Fest Registration Help (5★ Review)', points: 15 },
-  { label: 'Bejai Document Pickup & Handover (5★ Review)', points: 15 },
 ]

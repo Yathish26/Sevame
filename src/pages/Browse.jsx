@@ -3,11 +3,12 @@ import { useSearchParams } from 'react-router-dom'
 import { useApp } from '../context/app-context.js'
 import { BROWSE_AREAS, CATEGORIES } from '../data/demo.js'
 import JobCard from '../components/JobCard.jsx'
+import FeedStatus from '../components/FeedStatus.jsx'
 
 const DEFAULTS = { search: '', area: 'All', category: 'All', sort: 'recent', urgentOnly: false }
 
 function Browse() {
-  const { jobs } = useApp()
+  const { jobs, jobsStatus, refreshJobs } = useApp()
   const [params] = useSearchParams()
   const [filters, setFilters] = useState(() => ({
     ...DEFAULTS,
@@ -120,7 +121,9 @@ function Browse() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {list.length === 0 ? (
+        {jobsStatus !== 'ready' ? (
+          <FeedStatus status={jobsStatus} onRetry={refreshJobs} />
+        ) : list.length === 0 ? (
           <div className="col-span-full bg-white/90 backdrop-blur-sm rounded-[1.75rem] border border-slate-200/80 p-10 text-center space-y-3 shadow-lg animate-fade-up">
             <p className="text-lg font-extrabold text-slate-900">No matching opportunities</p>
             <p className="text-sm text-slate-600">Try another Mangaluru locality or clear your active filters.</p>

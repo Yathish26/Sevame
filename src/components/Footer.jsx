@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/app-context.js'
-import { SITE_DOMAIN, SITE_URL } from '../master.js'
-
 function Footer() {
-  const { openModal } = useApp()
+  const { openModal, site } = useApp()
+  const { siteDomain: SITE_DOMAIN, siteUrl: SITE_URL } = site
 
   return (
     <footer className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 pb-6 border-t border-slate-200/80 text-xs text-slate-600 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">

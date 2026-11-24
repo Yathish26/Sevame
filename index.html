@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary SEO (title/description/canonical are updated per page by src/components/RouteSeo.jsx) -->
+    <!-- Primary SEO. Title/description per page, and every URL/email below, are filled at runtime by
+         src/components/RouteSeo.jsx from the backend settings (Admin → Panel). Nothing is baked in at build time. -->
     <title>Seva Mein — Get Help Nearby in Mangaluru | Peer-to-Peer Tasks & Local Jobs</title>
     <meta
       name="description"
@@ -15,7 +16,7 @@
       content="Seva Mein, sevamein, Mangaluru, Mangalore, local help, peer to peer tasks, part time jobs Mangaluru, student jobs Mangalore, errands, hire helpers, Surathkal, Bejai, Kadri, Kottara, Hampankatta"
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <link rel="canonical" href="%SITE_URL%/" />
+    <link rel="canonical" href="/" />
     <meta name="author" content="Seva Mein" />
     <meta name="application-name" content="Seva Mein" />
     <meta name="theme-color" content="#0f5257" />
@@ -36,13 +37,13 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Seva Mein" />
     <meta property="og:locale" content="en_IN" />
-    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:url" content="/" />
     <meta property="og:title" content="Seva Mein — Get Help Nearby in Mangaluru | Peer-to-Peer Tasks & Local Jobs" />
     <meta
       property="og:description"
       content="Seva Mein connects you with KYC-verified locals and students in Mangaluru. Post a task, compare offers and get help nearby in minutes across Surathkal, Bejai, Kadri, Kottara & Hampankatta — or earn by helping your neighbours."
     />
-    <meta property="og:image" content="%SITE_URL%/logo.png" />
+    <meta property="og:image" content="/logo.png" />
     <meta property="og:image:alt" content="Seva Mein logo" />
 
     <!-- Twitter / X -->
@@ -52,55 +53,9 @@
       name="twitter:description"
       content="Seva Mein connects you with KYC-verified locals and students in Mangaluru. Post a task, compare offers and get help nearby in minutes across Surathkal, Bejai, Kadri, Kottara & Hampankatta — or earn by helping your neighbours."
     />
-    <meta name="twitter:image" content="%SITE_URL%/logo.png" />
+    <meta name="twitter:image" content="/logo.png" />
 
-    <!-- Structured data (Google rich results) -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Organization",
-            "@id": "%SITE_URL%/#organization",
-            "name": "Seva Mein",
-            "url": "%SITE_URL%/",
-            "logo": "%SITE_URL%/logo.png",
-            "email": "%GRIEVANCE_EMAIL%",
-            "areaServed": { "@type": "City", "name": "Mangaluru" },
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "contactType": "customer support",
-              "email": "%GRIEVANCE_EMAIL%",
-              "areaServed": "IN",
-              "availableLanguage": ["English", "Kannada", "Hindi"]
-            }
-          },
-          {
-            "@type": "WebSite",
-            "@id": "%SITE_URL%/#website",
-            "url": "%SITE_URL%/",
-            "name": "Seva Mein",
-            "inLanguage": "en-IN",
-            "publisher": { "@id": "%SITE_URL%/#organization" }
-          },
-          {
-            "@type": "Service",
-            "name": "Peer-to-peer local task marketplace",
-            "serviceType": "Local errands, tasks and part-time help",
-            "provider": { "@id": "%SITE_URL%/#organization" },
-            "areaServed": [
-              { "@type": "City", "name": "Mangaluru" },
-              { "@type": "Place", "name": "Surathkal" },
-              { "@type": "Place", "name": "Bejai" },
-              { "@type": "Place", "name": "Kadri" },
-              { "@type": "Place", "name": "Kottara" },
-              { "@type": "Place", "name": "Hampankatta" }
-            ],
-            "url": "%SITE_URL%/"
-          }
-        ]
-      }
-    </script>
+    <!-- Structured data (Google rich results) is injected at runtime by RouteSeo.jsx from the backend settings. -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -138,7 +93,7 @@
       <h1>Seva Mein — Get help nearby in Mangaluru</h1>
       <p>
         Post a task, compare offers from KYC-verified locals and students across Surathkal, Bejai, Kadri, Kottara and
-        Hampankatta, and pay safely in ₹. Please enable JavaScript to use %SITE_DOMAIN%.
+        Hampankatta, and pay safely in ₹. Please enable JavaScript to use Seva Mein.
       </p>
     </noscript>
     <script type="module" src="/src/main.jsx"></script>
