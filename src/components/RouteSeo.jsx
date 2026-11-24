@@ -6,10 +6,18 @@ import { useApp } from '../context/app-context.js'
 const JSON_LD_ID = 'site-structured-data'
 const AREAS = ['Surathkal', 'Bejai', 'Kadri', 'Kottara', 'Hampankatta']
 
-// Updates the tags already declared in index.html (instead of adding duplicates).
+// Updates the tag declared in index.html (instead of adding duplicates), creating it if absent.
+// canonical and og:url are intentionally left out of index.html: Vite would try to bundle "/" as an asset.
 function setMeta(selector, value) {
-  const el = document.head.querySelector(selector)
-  if (el) el.setAttribute(selector.startsWith('link') ? 'href' : 'content', value)
+  let el = document.head.querySelector(selector)
+  if (!el) {
+    const isLink = selector.startsWith('link')
+    el = document.createElement(isLink ? 'link' : 'meta')
+    const [, attr, val] = selector.match(/\[(\w+(?::\w+)?)="([^"]+)"\]/) || []
+    if (attr) el.setAttribute(attr, val)
+    document.head.appendChild(el)
+  }
+  el.setAttribute(selector.startsWith('link') ? 'href' : 'content', value)
 }
 
 // Google structured data, built from the backend settings (Admin → Panel).
